@@ -26,6 +26,7 @@
 /*** data ***/
 
 struct editorConfig {
+  int cx, cy;
   int screenrows;
   int screencols;
   struct termios orig_termios;
@@ -219,6 +220,10 @@ void editorProcessKeypress() {
 /*** init ***/
 
 void initEditor() {
+  //Set cursor position on startup
+  E.cx = 0;
+  E.cy = 0;
+
   //get window size on startup
   if (getWindowSize(&E.screenrows, &E.screencols) == -1) die("getWindowSize");
 }
