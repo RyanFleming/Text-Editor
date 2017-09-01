@@ -101,7 +101,7 @@ int getWindowSize(int *rows, int *cols) {
 void editorDrawRows() {
   //draw column of '~' on left side like vim
   int y;
-  for (y = 0; y < 24; y++) {
+  for (y = 0; y < E.screenrows; y++) {
     write(STDOUT_FILENO, "~\r\n", 3);
   }
 }
