@@ -27,8 +27,9 @@ void enableRawMode() {
   //disable XOFF and XON in copy of struct
   raw.c_iflag &= ~(IXON);
   //Turn off ECHO feature, canonical mode in copy of struct
+  //Disable IEXTEN in copy of struct
   //Turn off SIGINT and SIGTSTP signals in copy of struct
-  raw.c_lflag &= ~(ECHO | ICANON | ISIG);
+  raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 
   //Pass the modified struct to write the new terminal attributes.
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
