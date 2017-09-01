@@ -19,6 +19,8 @@
 
 /*** defines ***/
 
+#define KILO_VERSION "0.0.1"
+
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 /*** data ***/
@@ -146,10 +148,20 @@ void abFree(struct abuf *ab) {
 /*** output ***/
 
 void editorDrawRows(struct abuf *ab) {
-  //draw column of '~' on left side like vim
+  
   int y;
   for (y = 0; y < E.screenrows; y++) {
-    abAppend(ab, "~", 1);
+    if (y == E.screenrows / 3) {
+      //Display welcome message
+      char welcome[80];
+      int welcomelen = snprintf(welcome, sizeof(welcome),
+        "Kilo editor -- version %s", KILO_VERSION);
+      if (welcomelen > E.screencols) welcomelen = E.screencols;
+      abAppend(ab, welcome, welcomelen);
+    } else {
+      //Add '~' to left hand side like vime
+      abAppend(ab, "~", 1);
+    }
 
     //Clear rest of row
     abAppend(ab, "\x1b[K", 3);
