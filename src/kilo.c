@@ -28,6 +28,8 @@ void enableRawMode() {
   //Fix ICRNL (Ctrl-M) so it as read as 13 instead of 10
   //disable XOFF (Ctrl-S) and XON (Ctrl-Q) 
   raw.c_iflag &= ~(ICRNL | IXON);
+  //Turn off all output processing ("\n" to "\r\n")
+  raw.c_oflag &= ~(OPOST);
   //Turn off ECHO feature, canonical mode 
   //Disable IEXTEN (Ctrl-V)
   //Turn off SIGINT (Ctrl-C) and SIGTSTP (Ctrl-Z) signals 
