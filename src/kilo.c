@@ -62,26 +62,38 @@ void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
+char editorReadKey() {
+  //Wait for one keypress and returns it
+  int nread;
+  char c;
+  while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+    if (nread == -1 && errno != EAGAIN) die("read");
+  }
+  return c;
+}
+
+/*** input ***/
+
+void editorProcessKeypress() {
+  //Waits for keypress then handles it
+  char c = editorReadKey();
+
+  switch (c) {
+    case CTRL_KEY('q'):
+      exit(0);
+      break;
+  }
+}
+ 
+
 /*** init ***/
 
 int main() {
   enableRawMode();
 
-  //Read 1 byte from standard input into the variable c
-  //until there are no more bytes to read.
   while (1) {
-    char c = '\0';
-    if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) die("read");
-    //Test whether character is control character and print byte as decimal number
-    if (iscntrl(c)) {
-      printf("%d\r\n", c);
-    //Else print byte as decimal number and character directly
-    } else {
-      printf("%d ('%c')\r\n", c, c);
-    }
-    //If Ctrl-Q is pressed then quit
-    if (c == CTRL_KEY('q')) break;
+    editorProcessKeypress();
   }
-
+  
   return 0;
 }
