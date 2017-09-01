@@ -72,6 +72,13 @@ char editorReadKey() {
   return c;
 }
 
+/*** output ***/
+
+void editorRefreshScreen() {
+  //Escape sequence + J command to clear entire screen(2)
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+}
+
 /*** input ***/
 
 void editorProcessKeypress() {
@@ -92,6 +99,7 @@ int main() {
   enableRawMode();
 
   while (1) {
+    editorRefreshScreen();
     editorProcessKeypress();
   }
   
