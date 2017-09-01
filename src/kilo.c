@@ -86,9 +86,10 @@ char editorReadKey() {
 int getCursorPosition(int *rows, int *cols) {
   char buf[32];
   unsigned int i = 0;
-
+  //Query the terminal for cursor information
   if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
 
+  //Read response into buffer
   while (i < sizeof(buf) - 1) {
     if (read(STDIN_FILENO, &buf[i], 1) != 1) break;
     if (buf[i] == 'R') break;
@@ -96,12 +97,12 @@ int getCursorPosition(int *rows, int *cols) {
   }
   buf[i] = '\0';
 
-  //Skip first character in buffer since it is '\x1b'
-  printf("\r\n&buf[1]: '%s'\r\n", &buf[1]);
+  //Check to make sure it starts with escape sequence
+  if (buf[0] != '\x1b' || buf[1] != '[') return -1;
+  //Scan buffer and change rows and columns to reflect the queried information
+  if (sscanf(&buf[2], "%d;%d", rows, cols) != 2) return -1;
 
-  editorReadKey();
-
-  return -1;
+  return 0;
 }
 
 int getWindowSize(int *rows, int *cols) {
