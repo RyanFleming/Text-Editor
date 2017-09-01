@@ -77,6 +77,8 @@ char editorReadKey() {
 void editorRefreshScreen() {
   //Escape sequence + J command to clear entire screen(2)
   write(STDOUT_FILENO, "\x1b[2J", 4);
+  //H command to position cursor at top left
+  write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /*** input ***/
