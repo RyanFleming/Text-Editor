@@ -130,6 +130,7 @@ struct abuf {
 #define ABUF_INIT {NULL, 0}
 
 void abAppend(struct abuf *ab, const char *s, int len) {
+  //Add commands to a buffer
   char *new = realloc(ab->b, ab->len + len);
 
   if (new == NULL) return;
@@ -144,28 +145,36 @@ void abFree(struct abuf *ab) {
 
 /*** output ***/
 
-void editorDrawRows() {
+void editorDrawRows(struct abuf *ab) {
   //draw column of '~' on left side like vim
   int y;
   for (y = 0; y < E.screenrows; y++) {
-    write(STDOUT_FILENO, "~", 1);
+    abAppend(ab, "~", 1);
 
     //Add blank line off the screen on bottom
     if (y < E.screenrows - 1) {
-      write(STDOUT_FILENO, "\r\n", 2);
+      abAppend(ab, "\r\n", 2);
     }
   }
 }
 
 void editorRefreshScreen() {
-  //Clear screen
-  write(STDOUT_FILENO, "\x1b[2J", 4);
-  write(STDOUT_FILENO, "\x1b[H", 3);
+  //Create a buffer to add commands
+  struct abuf ab = ABUF_INIT;
 
-  editorDrawRows();
+  //Clear screen
+  abAppend(&ab, "\x1b[2J", 4);
+  abAppend(&ab, "\x1b[H", 3);
+
+  editorDrawRows(&ab);
 
   //Reposition cursor
-  write(STDOUT_FILENO, "\x1b[H", 3);
+  abAppend(&ab, "\x1b[H", 3);
+
+  //Write buffer into STDOUT so screen refresh happens all at once
+  write(STDOUT_FILENO, ab.b, ab.len);
+  //Free buffer for more commands later
+  abFree(&ab);
 }
 
 /*** input ***/
