@@ -5,6 +5,8 @@
 // Implements basic features as well as syntax highlighting and search.
 //
 
+#include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
@@ -36,6 +38,15 @@ int main() {
   //until there are no more bytes to read.
   //Quit program when it reads 'q' character.
   char c;
-  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q');
+  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+    //Test whether character is control character and print byte as decimal number
+    if (iscntrl(c)) {
+      printf("%d\n", c);
+    //Else print byte as decimal number and character directly
+    } else {
+      printf("%d ('%c')\n", c, c);
+    }
+  }
+
   return 0;
 }
