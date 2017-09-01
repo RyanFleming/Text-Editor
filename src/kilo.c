@@ -6,6 +6,7 @@
 //
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
@@ -20,12 +21,13 @@ void die(const char *s) {
 
 void disableRawMode() {
   //Sets terminal to original state
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
+    die("tcsetattr");
 }
 
 void enableRawMode() {
   //Read terminal's current attributes into a struct
-  tcgetattr(STDIN_FILENO, &orig_termios);
+  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
   atexit(disableRawMode);
 
   struct termios raw = orig_termios;
@@ -46,7 +48,7 @@ void enableRawMode() {
   raw.c_cc[VTIME] = 1;
 
   //Pass the modified struct to write the new terminal attributes.
-  tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
 int main() {
@@ -56,7 +58,7 @@ int main() {
   //until there are no more bytes to read.
   while (1) {
     char c = '\0';
-    read(STDIN_FILENO, &c, 1);
+    if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) die("read");
     //Test whether character is control character and print byte as decimal number
     if (iscntrl(c)) {
       printf("%d\r\n", c);
