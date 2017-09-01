@@ -21,7 +21,11 @@
 
 /*** data ***/
 
-struct termios orig_termios;
+struct editorConfig {
+  struct termios orig_termios;
+};
+
+struct editorConfig E;
 
 /*** terminal ***/
 
@@ -36,16 +40,16 @@ void die(const char *s) {
 
 void disableRawMode() {
   //Sets terminal to original state
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
     die("tcsetattr");
 }
 
 void enableRawMode() {
   //Read terminal's current attributes into a struct
-  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
+  if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) die("tcgetattr");
   atexit(disableRawMode);
 
-  struct termios raw = orig_termios;
+  struct termios raw = E.orig_termios;
   //Modify copy of struct 
   //Fix ICRNL (Ctrl-M) so it as read as 13 instead of 10
   //disable XOFF (Ctrl-S) and XON (Ctrl-Q) 
