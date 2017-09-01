@@ -162,14 +162,17 @@ void editorRefreshScreen() {
   //Create a buffer to add commands
   struct abuf ab = ABUF_INIT;
 
+  //Hide cursor
+  abAppend(&ab, "\x1b[?25l", 6);
   //Clear screen
   abAppend(&ab, "\x1b[2J", 4);
   abAppend(&ab, "\x1b[H", 3);
 
   editorDrawRows(&ab);
 
-  //Reposition cursor
+  //Reposition cursor and show
   abAppend(&ab, "\x1b[H", 3);
+  abAppend(&ab, "\x1b[?25h", 6);
 
   //Write buffer into STDOUT so screen refresh happens all at once
   write(STDOUT_FILENO, ab.b, ab.len);
