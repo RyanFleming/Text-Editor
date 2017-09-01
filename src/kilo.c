@@ -13,6 +13,11 @@
 
 struct termios orig_termios;
 
+void die(const char *s) {
+  perror(s);
+  exit(1);
+}
+
 void disableRawMode() {
   //Sets terminal to original state
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
