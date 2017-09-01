@@ -24,11 +24,13 @@ void enableRawMode() {
   atexit(disableRawMode);
 
   struct termios raw = orig_termios;
-  //disable XOFF and XON in copy of struct
-  raw.c_iflag &= ~(IXON);
-  //Turn off ECHO feature, canonical mode in copy of struct
-  //Disable IEXTEN in copy of struct
-  //Turn off SIGINT and SIGTSTP signals in copy of struct
+  //Modify copy of struct 
+  //Fix ICRNL (Ctrl-M) so it as read as 13 instead of 10
+  //disable XOFF (Ctrl-S) and XON (Ctrl-Q) 
+  raw.c_iflag &= ~(ICRNL | IXON);
+  //Turn off ECHO feature, canonical mode 
+  //Disable IEXTEN (Ctrl-V)
+  //Turn off SIGINT (Ctrl-C) and SIGTSTP (Ctrl-Z) signals 
   raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
 
   //Pass the modified struct to write the new terminal attributes.
