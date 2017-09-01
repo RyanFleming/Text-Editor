@@ -109,7 +109,7 @@ int getWindowSize(int *rows, int *cols) {
   struct winsize ws;
 
   //place the number of columns and rows into winsize struct
-  if (1 || ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+  if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
     if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) return -1;
     return getCursorPosition(rows, cols);
   } else {
