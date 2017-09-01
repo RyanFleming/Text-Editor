@@ -49,10 +49,10 @@ int main() {
   while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
     //Test whether character is control character and print byte as decimal number
     if (iscntrl(c)) {
-      printf("%d\n", c);
+      printf("%d\r\n", c);
     //Else print byte as decimal number and character directly
     } else {
-      printf("%d ('%c')\n", c, c);
+      printf("%d ('%c')\r\n", c, c);
     }
   }
 
