@@ -24,6 +24,8 @@ void enableRawMode() {
   atexit(disableRawMode);
 
   struct termios raw = orig_termios;
+  //disable XOFF and XON in copy of struct
+  raw.c_iflag &= ~(IXON);
   //Turn off ECHO feature, canonical mode in copy of struct
   //Turn off SIGINT and SIGTSTP signals in copy of struct
   raw.c_lflag &= ~(ECHO | ICANON | ISIG);
